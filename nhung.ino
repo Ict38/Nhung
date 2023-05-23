@@ -3,12 +3,14 @@
 #include <BlynkSimpleEsp32.h>
 
 #define ldr 34
-#define led1 33
-#define led2 32
 
 #define ir1 5
 #define ir2 18
 
+#define led1 33
+#define led2 32
+
+// Led 7 đoạn
 #define aPin 13  //
 #define bPin 14  //      _____
 #define cPin 4   //     |  A  |
@@ -19,6 +21,8 @@
 
 #define d1Pin 23  // Chân chung cho số thứ 1 led 7 đoạn 4 số (Nối qua chân Collector của transitor c1815)
 #define d2Pin 22  // Chân chung cho số thứ 2 led 7 đoạn 4 số  (Nối qua chân Collector của transitor c1815)
+
+// -----
 
 #define BLYNK_TEMPLATE_ID "TMPL6jcMxWXj6";
 #define BLYNK_TEMPLATE_NAME "Nhung";
@@ -33,8 +37,6 @@ int led2_time = 0;
 int van_toc = 0;
 
 int On = 1, Off = 0;
-int digitOn = 0, digitOff = 1;
-
 int khoang_cach = 200;
 
 void setup() {
@@ -49,12 +51,11 @@ void setup() {
   pinMode(fPin, OUTPUT);
   pinMode(gPin, OUTPUT);
 
-
   pinMode(d1Pin, OUTPUT);
   pinMode(d2Pin, OUTPUT);
   
-  pinMode(ldr, INPUT);
-  pinMode(ir1, INPUT);
+  pinMode(ldr, INPUT); // Đo ánh sáng
+  pinMode(ir1, INPUT); // Bắt chuyển động
   pinMode(ir2, INPUT);
 
   pinMode(led1, OUTPUT);
@@ -83,11 +84,11 @@ void loop() {
 
     if(ir2_value == 0){
       led2_time = millis();
-      tinhVanToc();
       if(light >= 1600){
         digitalWrite(led2, HIGH);
         Blynk.virtualWrite(V2, 1);
       }
+      tinhVanToc();
     }
   
   if(currentTime - led1_time >= 5000){
@@ -102,7 +103,7 @@ void loop() {
 }
 
 void tinhVanToc(){
-  Serial.println(((led2_time - led1_time) / 100.0));
+  // Serial.println(((led2_time - led1_time) / 100.0));
   van_toc =  round(khoang_cach / ((led2_time - led1_time) / 100.0));
   if(van_toc >= 99) van_toc = 99;
   Blynk.virtualWrite(V3, van_toc);
@@ -112,7 +113,6 @@ void tinhVanToc(){
     digitalWrite(d1Pin, Off);
     delay(4);
     digitalWrite(d1Pin, On);
-
 
     showNumber((van_toc / 10) % 10);
     digitalWrite(d2Pin, Off);
